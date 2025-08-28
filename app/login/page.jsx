@@ -4,8 +4,9 @@ import { Suspense, useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
+// (Do NOT export revalidate here; it's server-only)
+// You may keep dynamic if you like, but it's optional for a client page.
+// export const dynamic = "force-dynamic";
 
 function LoginInner() {
   const [email, setEmail] = useState("");
@@ -13,7 +14,6 @@ function LoginInner() {
   const [error, setError] = useState("");
   const router = useRouter();
 
-  // ✅ safe now because it's inside a component rendered under <Suspense>
   const sp = useSearchParams();
   const justSignedUp = sp.get("signup") === "1";
 
@@ -31,7 +31,6 @@ function LoginInner() {
         <h1 className="text-xl font-semibold">Log in</h1>
         {justSignedUp && <div className="text-green-400 text-sm">Account created. Please log in.</div>}
         {error && <div className="text-red-400 text-sm">{error}</div>}
-
         <input
           className="w-full rounded bg-slate-800 px-3 py-2 outline-none"
           placeholder="you@example.com"
@@ -46,9 +45,7 @@ function LoginInner() {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
-
         <button className="w-full rounded bg-blue-600 hover:bg-blue-500 py-2">Log in</button>
-
         <div className="text-sm text-slate-300">
           No account? <a className="underline" href="/signup">Sign up</a>
         </div>
