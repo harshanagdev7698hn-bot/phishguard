@@ -1,13 +1,19 @@
 "use client";
+
+import { Suspense, useState } from "react";
 import { signIn } from "next-auth/react";
-import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
-export default function LoginPage() {
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
+function LoginInner() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const router = useRouter();
+
+  // ✅ safe now because it's inside a component rendered under <Suspense>
   const sp = useSearchParams();
   const justSignedUp = sp.get("signup") === "1";
 
@@ -31,14 +37,14 @@ export default function LoginPage() {
           placeholder="you@example.com"
           type="email"
           value={email}
-          onChange={e => setEmail(e.target.value)}
+          onChange={(e) => setEmail(e.target.value)}
         />
         <input
           className="w-full rounded bg-slate-800 px-3 py-2 outline-none"
           placeholder="••••••••"
           type="password"
           value={password}
-          onChange={e => setPassword(e.target.value)}
+          onChange={(e) => setPassword(e.target.value)}
         />
 
         <button className="w-full rounded bg-blue-600 hover:bg-blue-500 py-2">Log in</button>
@@ -48,5 +54,13 @@ export default function LoginPage() {
         </div>
       </form>
     </main>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div className="p-6 text-slate-300">Loading…</div>}>
+      <LoginInner />
+    </Suspense>
   );
 }
